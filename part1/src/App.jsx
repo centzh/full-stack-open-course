@@ -113,7 +113,59 @@ const ButtonClick = () => {
   )
 }
 
+const History = ({allClicks, total}) => {
+  if (allClicks.length == 0){
+    return (
+      <div>
+        the app is used by pressing buttons
+      </div>
+    )
+  }
+  return (
+    // Must be enclosed in div
+    <div>
+       <p> button press history: {allClicks.join(' ')} </p>
+       <p>total {total}</p>
+    </div>
+  )
+}
 
+
+const MultipleStates = () => {
+
+  // Create two pieces of state
+  const [left, setLeft] = useState(0)
+  const [right, setRight] = useState(0)
+  const [allClicks, setAll] = useState([])
+  const [total, setTotal] = useState(0)
+
+  const handleLeftClick = () => {
+    // debugger
+    setAll(allClicks.concat('L'))
+    const updatedLeft = left + 1
+    setLeft(updatedLeft)
+    setTotal(updatedLeft + right)
+  }
+
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'))
+    const updatedRight = right + 1
+    setRight(updatedRight)
+    setTotal(left + updatedRight)
+  }
+
+  return (
+    <div>
+      {left}
+      <Button onClick={handleLeftClick} name={'left'}/>
+      <Button onClick={handleRightClick} name={'right'}/>
+      {right}
+      <History allClicks={allClicks} total={total}/>
+    </div>
+  )
+
+
+}
 
   
 // Keep this relatively light, you can run various components here
@@ -122,7 +174,8 @@ const App = () => {
     
     // <Greetings />
     // <Timer/>
-    <ButtonClick/>
+    // <ButtonClick/>
+    <MultipleStates/>
   )
 }
 
