@@ -19,9 +19,9 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
-  const [selected, setSelected] = useState(0)
+
   const numElements = anecdotes.length
+  const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(Array(numElements).fill(0))
   const [argmax, setArgmax] = useState(0)
 
@@ -35,9 +35,9 @@ const App = () => {
   }
    
   const handleNextAnecdote = () => {
-    // This needs to go inside the handler function, new number is generated with random click
+    // We need to get the entry inside the handler function, new number is generated with random click
     // new number is not generated on render
-    const entry = Math.floor(Math.random()*numElements)
+    const entry = Math.floor(Math.random()*numElements) // ensures it executes with button click not render
     setSelected(entry) // If it never freshes, then it just keeps printing this out
   }
   
