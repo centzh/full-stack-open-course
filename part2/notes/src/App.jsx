@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react' 
 import axios from 'axios'
 import Note from './components/Note'
+import noteService from './services/notes'
 
 // The key must be defined for the Note components, not the li tags 
 // This is because we now have an array of Notes not li tags
@@ -10,19 +11,36 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
+    noteService
+      .getAll()
+      .then(initialNotes => {
+        setNotes(initialNotes)
       })
   }, [])
-  console.log('render', notes.length, 'notes')
- 
+
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
+
+  const toggleImportanceOf = id => {
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    noteService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(n => n.id !== id ? n : returnedNote))
+      })
+      .catch(error => {
+        alert(
+          `the note '${note.content} was already deleted from server`
+        )
+        // remove already deleted note from applications's state
+        // none of the other notes have the id as the already deleted note (id = 1000)
+        // so all the other notes remain, and the already deleted note is filtered out
+        setNotes(notes.filter(n => n.id !== id))
+      })
+  }
 
   const addNote = (event) => {
     // here, the event is the submission of the form
@@ -37,12 +55,16 @@ const App = () => {
       important: Math.random() < 0.5,
       id: String(notes.length + 1),
     }
-    
-    // we add the new note object to the list of notes which is a state variable
-    setNotes(notes.concat(noteObject))
 
-    // We set the current note to be empty, this is linked to the form's internal state value
-    setNewNote('')
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        // we add the new note object to the list of notes which is a state variable
+        setNotes(notes.concat(returnedNote))
+
+        // We set the current note to be empty, this is linked to the form's internal state value
+        setNewNote('')
+      })   
   }
 
   const handleNoteChange = (event) => {
@@ -64,7 +86,13 @@ const App = () => {
       </div>
       <ul>
         {/* The key goes here, not in the individual note  */}
-        {notesToShow.map(note=><Note key={note.id} note={note}/>)}
+        {notesToShow.map(note=>
+          <Note 
+            key={note.id} 
+            note={note}
+            toggleImportance={()=>toggleImportanceOf(note.id)}
+          />
+        )}
       </ul>
 
       <form onSubmit={addNote}>
