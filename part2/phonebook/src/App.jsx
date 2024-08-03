@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import People from './components/People'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import noteService from './services/notes'
 
 const App = () => {
 
@@ -17,29 +17,24 @@ const App = () => {
 
   // state variable representing filter input search name
   const [newSearchName, setNewSearchName] = useState('')
-
+ 
   // Retrieve data from server 
   useEffect(() => {
-    console.log('effect')
-    axios
-      // not https
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    noteService
+    // getAll returns promise with response.data (a person)
+    // we then handle the response by setting the persons state to the response
+    .getAll()
+    .then(person=>setPersons(person))
   },[])
 
   // handler for changes in input name 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
-    // console.log(newName)
   }
 
   // handler for changes in input number
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
-    // console.log(newNumber)
   }
 
   // handler for changes in input search name
@@ -47,11 +42,19 @@ const App = () => {
   // and personsToShow is updated and displayed
   const handleSearchNameChange = (event) => {
     setNewSearchName(event.target.value)
-    // console.log(newSearchName)
+  }
+
+  const onClick = (id) => {
+    // One big design question is where do you handle the click
+    if(window.confirm(`Delete ${name}?`)){
+      console.log(`Deleting ${name} from ID ${id}`)
+      noteService.remove(id)
+      setPersons(persons.filter(person=>person.id!=id))
+    }
+    console.log(`hello from ${id}`)
   }
 
   const personsToShow = persons.filter(person=>person.name.toLowerCase().includes(newSearchName.toLowerCase()))
-  // console.log(personsToShow)
 
   // handler for adding a person (form submission)
   const addPerson = (event) => {
@@ -62,7 +65,7 @@ const App = () => {
     // create new name object
     const person = {
       name: newName, 
-      number: newNumber
+      number: newNumber,
     }
 
     const names = persons.map(person=>person.name)
@@ -71,12 +74,13 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     }else{
-       // add new object to state variable representing collection of persons
-      setPersons(persons.concat(person))
-
-      // Clear once you have submitted - forces input to be cleared too
-      setNewName('')
-      setNewNumber('')
+      noteService
+        .create(person)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
 
@@ -87,7 +91,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addPerson={addPerson}/>
       <h2>Numbers</h2>
-      <People personsToShow={personsToShow}/>
+      <People personsToShow={personsToShow} onClick={onClick}/>
     </div>
   )
 }
