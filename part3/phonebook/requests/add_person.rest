@@ -1,0 +1,32 @@
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "Vincent Zhang",
+    "number": "0480-225-343"
+}
+
+### Name is missing
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "number": "0480-225-343"
+}
+
+### Number is missing - note, cannot have , after last entry
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "Harvey Chen"
+}
+
+### Name must be unique
+POST http://localhost:3001/api/persons/
+content-type: application/json
+
+{
+    "name": "Vincent Zhang",
+    "number": "0480-226-343"
+}
