@@ -21,7 +21,7 @@ const Statistics = ({totalHoursWorked, averageHoursWorked, mostHoursWorked}) => 
         </div>
     )
 }
-
+ 
 const Display = () => {
     
     const [accomplishInput, setAccomplishInput] = useState("")
@@ -38,27 +38,44 @@ const Display = () => {
     // event handler for form submissions
     const handleFormSubmit = (event) => {
         event.preventDefault()
+        
+        // Check if hours worked is not a number
+        if(isNaN(hoursInput)){
+            alert("Number of hours is not a number")
+            setHoursInput('')
+            return
+        }
+
+        if(hoursInput < 0 || hoursInput > 24 ){
+            alert("Number of hours is outside the 24-hour range")
+            setHoursInput('')
+            return
+        }
 
         // We can just define an object here, there is no template for an object
         const new_record = {
             accomplished: accomplishInput, 
-            hoursWorked: hoursInput,
+            hoursWorked: Number(hoursInput),
             id: records.length + 1 // define id as record number so we can use as key, 
         }
     
         setRecords(records.concat(new_record))
         console.log(records)
+        
+        // Clear inputs
+        setAccomplishInput('')
+        setHoursInput('')
     }
 
-    const hoursWorked = records.map(record=>Number(record.hoursWorked))
+    const hoursWorked = records.map(record=>record.hoursWorked)
     const totalHoursWorked = sum(hoursWorked)
     const averageHoursWorked = totalHoursWorked / records.length
     const mostHoursWorked = Math.max(...hoursWorked)
  
- 
     return (
         <div>
             <h1>Daily tracker</h1>
+         
         
             <form onSubmit={handleFormSubmit}>
                 <p>What did you accomplish? </p> 
@@ -71,6 +88,7 @@ const Display = () => {
                     <button type ="submit">save</button>
                 </div>
             </form>
+
             <p></p>
             
             <div>
