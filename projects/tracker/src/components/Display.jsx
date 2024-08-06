@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Input from './Input'
 
 const Display = () => {
     
@@ -21,7 +22,7 @@ const Display = () => {
         const new_record = {
             accomplished: accomplishInput, 
             hoursWorked: hoursInput,
-            id: dailyRecords.length // define id as record number so we can use as key, 
+            id: dailyRecords.length + 1 // define id as record number so we can use as key, 
         }
     
         setDailyRecords(dailyRecords.concat(new_record))
@@ -35,28 +36,34 @@ const Display = () => {
         
             <form onSubmit={handleFormSubmit}>
                 <p>What did you accomplish? </p> 
-                <input 
-                    value={accomplishInput}
-                    onChange={(event) => handleInputChange(event, setAccomplishInput)}
-                />
-            </form>
+                <Input input={accomplishInput} setInput={setAccomplishInput} handler={handleInputChange}/>
 
-            <form onSubmit={handleFormSubmit}>
                 <p>How many hours did you work?</p>
-                <input
-                    value={hoursInput}
-                    onChange={(event) => handleInputChange(event, setHoursInput)}
-                />
-                <button type="submit">save</button>
+                <Input input={hoursInput} setInput={setHoursInput} handler={handleInputChange}/>
+                
+                <div>
+                    <button type ="submit">save</button>
+                </div>
             </form>
             <p></p>
             
             <div>
-                {dailyRecords.map(record=>
-                    <div key={record.id}>
-                        {record.accomplished} {record.hoursWorked}
-                    </div>
-                )}
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Day</th>
+                            <th>Accomplished</th>
+                            <th>Hours worked</th>
+                        </tr>
+                        {dailyRecords.map(record=>
+                        <tr key={record.id}>
+                            <td>{record.id}</td> 
+                            <td>{record.accomplished}</td> 
+                            <td>{record.hoursWorked}</td> 
+                        </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
 
         </div>
