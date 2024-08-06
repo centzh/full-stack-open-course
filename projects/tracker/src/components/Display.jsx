@@ -1,11 +1,32 @@
 import { useState } from "react"
 import Input from './Input'
 
+const sum = (arr) => {
+    const initialValue = 0
+    const total = arr.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        initialValue,
+    )
+    return total
+}
+
+const Statistics = ({totalHoursWorked, averageHoursWorked, mostHoursWorked}) => {
+    
+    return (
+        <div>
+            <h2>Statistics</h2>
+            <div>{`Total hours worked is ${totalHoursWorked}`}</div>
+            <div>{`Average hours worked is ${averageHoursWorked}`}</div> 
+            <div>{`Most hours worked is ${mostHoursWorked}`}</div>
+        </div>
+    )
+}
+
 const Display = () => {
     
     const [accomplishInput, setAccomplishInput] = useState("")
     const [hoursInput, setHoursInput] = useState("")
-    const [dailyRecords, setDailyRecords] = useState([])
+    const [records, setRecords] = useState([])
       
     // event handler for changes in input elements
     const handleInputChange = (event, setInputFunction) => {
@@ -22,14 +43,19 @@ const Display = () => {
         const new_record = {
             accomplished: accomplishInput, 
             hoursWorked: hoursInput,
-            id: dailyRecords.length + 1 // define id as record number so we can use as key, 
+            id: records.length + 1 // define id as record number so we can use as key, 
         }
     
-        setDailyRecords(dailyRecords.concat(new_record))
-        console.log(dailyRecords)
+        setRecords(records.concat(new_record))
+        console.log(records)
     }
- 
 
+    const hoursWorked = records.map(record=>Number(record.hoursWorked))
+    const totalHoursWorked = sum(hoursWorked)
+    const averageHoursWorked = totalHoursWorked / records.length
+    const mostHoursWorked = Math.max(...hoursWorked)
+ 
+ 
     return (
         <div>
             <h1>Daily tracker</h1>
@@ -55,7 +81,7 @@ const Display = () => {
                             <th>Accomplished</th>
                             <th>Hours worked</th>
                         </tr>
-                        {dailyRecords.map(record=>
+                        {records.map(record=>
                         <tr key={record.id}>
                             <td>{record.id}</td> 
                             <td>{record.accomplished}</td> 
@@ -64,8 +90,8 @@ const Display = () => {
                         )}
                     </tbody>
                 </table>
-            </div>
-
+            </div> 
+            <Statistics totalHoursWorked={totalHoursWorked} averageHoursWorked={averageHoursWorked} mostHoursWorked={mostHoursWorked}/>
         </div>
     )
 }
