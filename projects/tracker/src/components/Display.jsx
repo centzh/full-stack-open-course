@@ -71,6 +71,12 @@ const Display = () => {
             hoursWorked: Number(hoursInput),
             id: records.length + 1 // define id as record number so we can use as key, 
         }
+
+        axios
+            .post('http://localhost:3001/records', new_record) // send the record to server via post request
+            .then(response => {
+                console.log(response)
+            })
     
         setRecords(records.concat(new_record))
         console.log(records)
