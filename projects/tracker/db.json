@@ -1,0 +1,19 @@
+{
+    "records": [
+      {
+        "id": "1",
+        "accomplished": "Bishop Ch 2",
+        "hoursWorked": 4
+      },
+      {
+        "id": "2",
+        "accomplished": "Bishop Ch 3",
+        "hoursWorked": 6
+      },
+      {
+        "id": "3",
+        "accomplished": "Bishop Ch 4",
+        "hoursWorked": 8
+      }
+    ]
+}

@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Input from './Input'
+import axios from "axios"
 
 const sum = (arr) => {
     const initialValue = 0
@@ -27,6 +28,18 @@ const Display = () => {
     const [accomplishInput, setAccomplishInput] = useState("")
     const [hoursInput, setHoursInput] = useState("")
     const [records, setRecords] = useState([])
+
+    useEffect(()=>{
+        console.log('effect')
+        axios
+            .get('http://localhost:3001/records') // send get request to server
+            .then(response=> {                    // handle the response
+                console.log('promise fulfilled')
+                setRecords(response.data)
+            })
+
+    },[]) // use [] so that effect fires along with the first render only (try removing!)
+
       
     // event handler for changes in input elements
     const handleInputChange = (event, setInputFunction) => {
@@ -76,7 +89,6 @@ const Display = () => {
         <div>
             <h1>Daily tracker</h1>
          
-        
             <form onSubmit={handleFormSubmit}>
                 <p>What did you accomplish? </p> 
                 <Input input={accomplishInput} setInput={setAccomplishInput} handler={handleInputChange}/>
